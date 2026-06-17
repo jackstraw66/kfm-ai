@@ -1,0 +1,36 @@
+spring:
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      init:
+        pull-model-strategy: when_missing
+      chat:
+        options:
+#          model: huggingface.co/datasets/jaysooner/grateful-dead-metadata
+#          model: hf.co/microsoft/Phi-3-mini-4k-instruct-gguf
+#          model: hf.co/QuantFactory/Phi-3-mini-128k-instruct-GGUF
+          model: hf.co/Qwen/Qwen2.5-Coder-14B-Instruct-GGUF
+
+#    openai:
+#      api-key: ${OPENAI_API_KEY}
+#      base-url: https://api.openai.com
+
+  datasource:
+    url: jdbc:mysql://${db.host:localhost}/kfm_ai?createDatabaseIfNotExist=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false
+    username: ${db.username:root}
+    password: ${db.password:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimumIdle: 2
+      maximumPoolSize: 30
+      connectionTimeout: 500000
+      leakDetectionThreshold: 300000
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        globally_quoted_identifiers: true
+
+logging:
+  config: classpath:logback-spring.xml
