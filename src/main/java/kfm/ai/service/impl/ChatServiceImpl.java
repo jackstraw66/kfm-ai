@@ -7,12 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @Slf4j
+@SessionScope
 public class ChatServiceImpl implements ChatService {
 
     private ChatClient chatClient;

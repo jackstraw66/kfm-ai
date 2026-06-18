@@ -9,7 +9,6 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.6</version>
         <relativePath/>
-        <!-- lookup parent from repository -->
     </parent>
 
 	<groupId>kfm</groupId>
@@ -22,8 +21,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-<!--		<maven.compiler.source>25</maven.compiler.source>-->
-<!--        <maven.compiler.target>25</maven.compiler.target>-->
         <maven.compiler.release>25</maven.compiler.release>
 		
 		<spring-boot.version>4.0.6</spring-boot.version>
@@ -154,6 +151,12 @@
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>kfm</groupId>
+            <artifactId>html-parser</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!-- 
         ==================================================
                 Test Dependencies
@@ -161,6 +164,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik</artifactId>
+            <version>1.9.3</version>
             <scope>test</scope>
         </dependency>
 		<dependency>
