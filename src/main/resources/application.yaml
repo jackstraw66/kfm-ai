@@ -37,7 +37,7 @@ batch:
   ingest:
     api-key: ${SETLIST_FM_API_KEY:}
     index-url: https://www.setlist.fm/setlists/grateful-dead-bd6ad4a.html
-    request-delay-ms: 1000
+    request-delay-ms: 2000
 
 logging:
   config: classpath:logback-spring.xml

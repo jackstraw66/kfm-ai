@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Search – KFM</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --surface: #16213e;
+            --primary: #e94560;
+            --primary-hover: #ff6b6b;
+            --text: #eaeaea;
+            --text-muted: #a0a0a0;
+            --border: #2a2a4a;
+            --input-bg: #0f3460;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .search-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        input[type="text"]::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .segue-arrow {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 0.85rem;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        button[type="submit"]:hover {
+            background: var(--primary-hover);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .results-header h2 {
+            font-size: 1.2rem;
+        }
+
+        .results-count {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .results-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .results-table tr:hover td {
+            background: rgba(233, 69, 96, 0.05);
+        }
+
+        .results-table a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .results-table a:hover {
+            text-decoration: underline;
+        }
+
+        .segue-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .search-card { padding: 1.25rem; }
+            .results-table th, .results-table td { padding: 0.5rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>&#9835; Show Search</h1>
+    <p class="subtitle">Find Grateful Dead shows by song or segue</p>
+
+    <div class="search-card">
+        <div class="tab-bar">
+            <button class="tab" id="tab-song"
+                    th:classappend="${searchType == null || searchType == 'song'} ? ' active' : ''"
+                    onclick="switchTab('song')">
+                Song Search
+            </button>
+            <button class="tab" id="tab-segue"
+                    th:classappend="${searchType == 'segue'} ? ' active' : ''"
+                    onclick="switchTab('segue')">
+                Segue Search
+            </button>
+        </div>
+
+        <!-- Song search form -->
+        <form id="form-song" th:action="@{/shows/search}" method="get"
+              th:classappend="${searchType == 'segue'} ? ' hidden' : ''">
+            <input type="hidden" name="searchType" value="song">
+            <div class="form-group">
+                <label for="song-input">Song Title</label>
+                <input type="text" id="song-input" name="song"
+                       th:value="${song}"
+                       placeholder="e.g. Scarlet Begonias"
+                       list="song-titles" autocomplete="off">
+            </div>
+            <button type="submit">Search Shows</button>
+        </form>
+
+        <!-- Segue search form -->
+        <form id="form-segue" th:action="@{/shows/search}" method="get"
+              th:classappend="${searchType != 'segue'} ? ' hidden' : ''">
+            <input type="hidden" name="searchType" value="segue">
+            <div class="form-group">
+                <label for="from-input">From Song</label>
+                <input type="text" id="from-input" name="fromSong"
+                       th:value="${fromSong}"
+                       placeholder="e.g. China Cat Sunflower"
+                       list="song-titles" autocomplete="off">
+            </div>
+            <div class="segue-arrow">&#9654;</div>
+            <div class="form-group">
+                <label for="to-input">Into Song</label>
+                <input type="text" id="to-input" name="toSong"
+                       th:value="${toSong}"
+                       placeholder="e.g. I Know You Rider"
+                       list="song-titles" autocomplete="off">
+            </div>
+            <button type="submit">Search Segues</button>
+        </form>
+    </div>
+
+    <!-- Results -->
+    <div th:if="${results != null}">
+        <div class="search-card">
+            <div class="results-header">
+                <h2 th:text="'Results for: ' + ${queryDescription}">Results</h2>
+                <span class="results-count"
+                      th:text="${#lists.size(results)} + ' show(s) found'"></span>
+            </div>
+
+            <div th:if="${#lists.isEmpty(results)}" class="no-results">
+                <p>No shows found matching your search.</p>
+            </div>
+
+            <table th:if="${!#lists.isEmpty(results)}" class="results-table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Set</th>
+                    <th>Song</th>
+                    <th>Source</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="song : ${results}">
+                    <td th:text="${#temporals.format(song.songSet.setList.date, 'MMM d, yyyy')}"></td>
+                    <td>
+                        <span th:if="${song.songSet.encore}">Encore</span>
+                        <span th:unless="${song.songSet.encore}"
+                              th:text="'Set ' + ${song.songSet.ordinal}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${song.title}"></span>
+                        <span th:if="${song.segue}" class="segue-badge">&gt;</span>
+                        <br th:if="${song.annotation != null}">
+                        <small th:if="${song.annotation != null}"
+                               th:text="'(' + ${song.annotation} + ')'"
+                               style="color: var(--text-muted)"></small>
+                    </td>
+                    <td>
+                        <a th:href="${song.songSet.setList.sourceUrl}"
+                           target="_blank" rel="noopener">setlist.fm</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Song title datalist for autocomplete -->
+<datalist id="song-titles"></datalist>
+
+<script>
+    function switchTab(tab) {
+        document.getElementById('form-song').classList.toggle('hidden', tab !== 'song');
+        document.getElementById('form-segue').classList.toggle('hidden', tab !== 'segue');
+        document.getElementById('tab-song').classList.toggle('active', tab === 'song');
+        document.getElementById('tab-segue').classList.toggle('active', tab === 'segue');
+    }
+
+    // Load song titles for autocomplete
+    fetch('/shows/titles')
+        .then(r => r.json())
+        .then(titles => {
+            const datalist = document.getElementById('song-titles');
+            titles.forEach(title => {
+                const opt = document.createElement('option');
+                opt.value = title;
+                datalist.appendChild(opt);
+            });
+        })
+        .catch(() => { /* autocomplete is a nice-to-have */ });
+</script>
+</body>
+</html>

@@ -42,9 +42,13 @@ public class SetlistFmApiClient {
                 .build();
     }
 
+    private static final int MAX_RETRIES = 3;
+    private static final long RETRY_BACKOFF_MS = 2000;
+
     /**
      * Fetches all Grateful Dead setlists from the API, page by page.
-     * Applies rate-limit delay between page fetches.
+     * Applies rate-limit delay between page fetches and retries with
+     * exponential backoff on 429 (Too Many Requests) responses.
      *
      * @return list of SetList domain objects mapped from the API response
      */
@@ -58,19 +62,10 @@ public class SetlistFmApiClient {
                 applyRateLimitDelay();
             }
 
-            SetlistsResponse response;
-            try {
-                response = restClient.get()
-                        .uri("/1.0/artist/{mbid}/setlists?p={page}", GRATEFUL_DEAD_MBID, page)
-                        .retrieve()
-                        .body(SetlistsResponse.class);
-            } catch (RestClientException ex) {
-                log.error("Failed to fetch setlists page {}: {}", page, ex.getMessage());
-                break;
-            }
+            SetlistsResponse response = fetchPageWithRetry(page);
 
             if (response == null || response.setlist() == null) {
-                log.warn("Empty response for page {}", page);
+                log.warn("Empty or failed response for page {}, stopping pagination", page);
                 break;
             }
 
@@ -102,9 +97,51 @@ public class SetlistFmApiClient {
     }
 
     /**
+     * Fetches a single page with retry logic for 429 rate-limit responses.
+     * Uses exponential backoff: 2s, 4s, 8s between retries.
+     *
+     * @param page the page number to fetch
+     * @return the response, or null if all retries are exhausted
+     */
+    private SetlistsResponse fetchPageWithRetry(int page) {
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                return restClient.get()
+                        .uri("/1.0/artist/{mbid}/setlists?p={page}", GRATEFUL_DEAD_MBID, page)
+                        .retrieve()
+                        .body(SetlistsResponse.class);
+            } catch (RestClientException ex) {
+                String message = ex.getMessage();
+                boolean isRateLimited = message != null && message.contains("429");
+
+                if (isRateLimited && attempt < MAX_RETRIES) {
+                    long backoff = RETRY_BACKOFF_MS * (1L << (attempt - 1)); // 2s, 4s, 8s
+                    log.warn("Rate limited on page {} (attempt {}/{}), retrying in {}ms",
+                            page, attempt, MAX_RETRIES, backoff);
+                    sleep(backoff);
+                } else {
+                    log.error("Failed to fetch setlists page {} (attempt {}/{}): {}",
+                            page, attempt, MAX_RETRIES, message);
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void sleep(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            log.warn("Sleep interrupted during retry backoff");
+        }
+    }
+
+    /**
      * Maps an API setlist response to our domain entity.
      */
-    private SetList mapToEntity(ApiSetlist apiSetlist) {
+    SetList mapToEntity(ApiSetlist apiSetlist) {
         if (apiSetlist.eventDate() == null || apiSetlist.eventDate().isBlank()) {
             return null;
         }
@@ -129,9 +166,37 @@ public class SetlistFmApiClient {
             }
         }
 
+        // Venue mapping
+        String venueName = null;
+        String cityName = null;
+        String state = null;
+
+        if (apiSetlist.venue() != null) {
+            String rawName = apiSetlist.venue().name();
+            if (rawName != null && !rawName.isBlank()) {
+                venueName = rawName.length() > 512 ? rawName.substring(0, 512) : rawName;
+            }
+
+            ApiCity apiCity = apiSetlist.venue().city();
+            if (apiCity != null) {
+                if (apiCity.name() != null && !apiCity.name().isBlank()) {
+                    cityName = apiCity.name();
+                }
+                // Prefer stateCode; fall back to state name
+                if (apiCity.stateCode() != null && !apiCity.stateCode().isBlank()) {
+                    state = apiCity.stateCode();
+                } else if (apiCity.state() != null && !apiCity.state().isBlank()) {
+                    state = apiCity.state();
+                }
+            }
+        }
+
         return SetList.builder()
                 .date(date)
                 .sourceUrl(sourceUrl)
+                .venueName(venueName)
+                .city(cityName)
+                .state(state)
                 .songSets(songSets)
                 .build();
     }
@@ -231,5 +296,8 @@ public class SetlistFmApiClient {
     public record ApiArtist(String mbid, String name) {}
 
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-    public record ApiVenue(String id, String name) {}
+    public record ApiVenue(String id, String name, ApiCity city) {}
+
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    public record ApiCity(String name, String state, String stateCode) {}
 }

@@ -40,6 +40,15 @@ public class SetList {
     @Column(name = "source_url", nullable = false, length = 2048)
     private String sourceUrl;
 
+    @Column(name = "venue_name", length = 512)
+    private String venueName;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "state", length = 100)
+    private String state;
+
     @OneToMany(mappedBy = "setList", cascade = {CascadeType.PERSIST, CascadeType.MERGE},
                orphanRemoval = true)
     @OrderBy("ordinal")
