@@ -172,10 +172,11 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- HTML parsing (used by SetlistParser for show page DOM parsing) -->
         <dependency>
-            <groupId>kfm</groupId>
-            <artifactId>html-parser</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.18.1</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
