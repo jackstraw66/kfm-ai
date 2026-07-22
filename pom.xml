@@ -173,11 +173,6 @@
             <artifactId>flyway-mysql</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-
         <!-- HTML parsing (used by SetlistParser for show page DOM parsing) -->
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -343,7 +338,6 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
                     <configLocation>checkstyle.xml</configLocation>
                     <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
                     <consoleOutput>true</consoleOutput>
