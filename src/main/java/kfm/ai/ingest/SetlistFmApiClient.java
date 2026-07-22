@@ -33,6 +33,7 @@ public class SetlistFmApiClient {
     private final RestClient restClient;
     private final BatchIngestProperties properties;
 
+    /** Constructs the client with the configured API key and request delay. */
     public SetlistFmApiClient(RestClient.Builder restClientBuilder, BatchIngestProperties properties) {
         this.properties = properties;
         this.restClient = restClientBuilder

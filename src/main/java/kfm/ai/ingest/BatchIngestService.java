@@ -100,6 +100,7 @@ public class BatchIngestService {
                     case INGESTED -> ingested++;
                     case SKIPPED -> skipped++;
                     case FAILED -> failed++;
+                    default -> log.warn("Unexpected PersistResult: {}", result);
                 }
 
                 if ((i + 1) % 100 == 0) {

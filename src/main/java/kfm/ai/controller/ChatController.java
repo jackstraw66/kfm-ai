@@ -7,7 +7,6 @@ import kfm.ai.service.ChatService.ChatResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +23,7 @@ public class ChatController {
         this.chatService = chatService;
     }
 
+    /** Processes a chat request and returns the AI-generated response. */
     @PostMapping
     public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest chatRequest) {
         log.debug("Received chat request:  {}", chatRequest);

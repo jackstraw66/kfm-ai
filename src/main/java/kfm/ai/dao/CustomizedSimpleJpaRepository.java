@@ -11,10 +11,10 @@ import jakarta.persistence.EntityManager;
  * Interface for JPA repositories requiring a {@code refresh()} method.
  *
  * @param <T> The type of entity being managed.
- * @param <ID> The type of the ID of the managed entity.
+ * @param <I> The type of the ID of the managed entity.
  */
 @NoRepositoryBean
-public interface CustomizedSimpleJpaRepository<T, ID extends Serializable> extends CrudRepository<T, ID> {
+public interface CustomizedSimpleJpaRepository<T, I extends Serializable> extends CrudRepository<T, I> {
     
     /**
      * Calls {@link EntityManager#refresh(Object)}.

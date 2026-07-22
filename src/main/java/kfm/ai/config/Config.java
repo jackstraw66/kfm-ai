@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Config {
 
+    /** Creates the ChatClient bean wired with the default system prompt and tools. */
     @Bean
     public ChatClient chatClient(ChatModel chatModel, DateTimeTools dateTimeTools) {
         return ChatClient

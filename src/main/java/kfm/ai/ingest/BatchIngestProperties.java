@@ -10,8 +10,8 @@ import org.springframework.validation.annotation.Validated;
 
 /**
  * Configuration properties for the batch ingest pipeline.
- * <p>
- * Bound from {@code batch.ingest.*} in application.yaml.
+ *
+ * <p>Bound from {@code batch.ingest.*} in application.yaml.</p>
  */
 @ConfigurationProperties(prefix = "batch.ingest")
 @Validated

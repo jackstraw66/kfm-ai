@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+ 
+<!DOCTYPE suppressions PUBLIC
+     "-//Checkstyle//DTD SuppressionFilter Configuration 1.0//EN"
+     "https://checkstyle.org/dtds/suppressions_1_0.dtd">
+
+<!-- Turns the CustomImportOrder check off until it can be configured properly. -->
+<suppressions>
+	<suppress checks="CustomImportOrder" files=".*\.java" />
+</suppressions>

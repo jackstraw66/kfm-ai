@@ -28,16 +28,16 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatResponse chat(ChatRequest chatRequest) {
         UUID chatId = Optional
-          .ofNullable(chatRequest.chatId())
-          .orElse(UUID.randomUUID());
+                .ofNullable(chatRequest.chatId())
+                .orElse(UUID.randomUUID());
         log.debug("Chat ID: {}", chatId);
         log.debug("Question: {}", chatRequest.question());
 
         String answer = chatClient
-          .prompt()
-          .user(chatRequest.question())
-          .call()
-          .content();
+                .prompt()
+                .user(chatRequest.question())
+                .call()
+                .content();
 
         answer = executeToolIfCalled(answer);
         log.debug("Answer: {}", answer);

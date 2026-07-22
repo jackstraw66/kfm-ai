@@ -10,16 +10,16 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
- * Hello world!
+ * Main Spring Boot application entry point.
  */
-@SpringBootApplication//(exclude = ContextRegionProviderAutoConfiguration.class)
+@SpringBootApplication
 @EnableJpaRepositories(repositoryBaseClass = CustomizedSimpleJpaRepositoryImpl.class)
 @ConfigurationPropertiesScan
 @Slf4j
 public class App {
+
+    /** Launches the Spring Boot application. */
     public static void main(String[] args) {
-//        log.info("kfm-ai::main() - enter");
         SpringApplication.run(App.class, args);
-//        log.info("kfm-ai::main() - exit");
     }
 }

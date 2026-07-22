@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "hooks": [
+    {
+      "name": "Run Maven Checkstyle on Save",
+      "trigger": "PreTaskExec",
+      "action": {
+        "type": "command",
+        "command": "./scripts/run-checkstyle.sh"
+      },
+      "enabled": false
+    }
+  ]
+}

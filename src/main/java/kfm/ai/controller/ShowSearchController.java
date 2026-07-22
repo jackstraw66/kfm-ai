@@ -27,6 +27,7 @@ public class ShowSearchController {
         return "shows/search";
     }
 
+    /** Handles song/segue search queries and populates the result model. */
     @GetMapping("/search")
     public String search(
             @RequestParam(required = false) String song,

@@ -10,11 +10,14 @@ import java.io.Serializable;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
-public class CustomizedSimpleJpaRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements CustomizedSimpleJpaRepository<T, ID> {
+public class CustomizedSimpleJpaRepositoryImpl<T, I extends Serializable>
+        extends SimpleJpaRepository<T, I>
+        implements CustomizedSimpleJpaRepository<T, I> {
 
     private final EntityManager entityManager;
-    
-    public CustomizedSimpleJpaRepositoryImpl(JpaEntityInformation<T, ID> entityInformation, EntityManager entityManager) {
+
+    public CustomizedSimpleJpaRepositoryImpl(
+            JpaEntityInformation<T, I> entityInformation, EntityManager entityManager) {
         super(entityInformation, entityManager);
         this.entityManager = entityManager;
     }
