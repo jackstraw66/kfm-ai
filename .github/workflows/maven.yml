@@ -19,6 +19,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write       # Required to push code, create tags, or generate releases
+      pull-requests: write  # Required to comment on or create pull requests
+      issues: write         # Required to interact with repository issues
+      checks: write         # Required to add check statuses to commits
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 25
