@@ -13,4 +13,3 @@ However, when I added the code to iterate through *all* of the concerts for a ba
 It was after receiving this error that Kiro informed me there was an API available to do what I was trying to do!  (I was not previously aware of this API.)  
 
 So, I asked Kiro to change the code to use the API instead of the HTML-parsing code.  This worked beautifully!
-
