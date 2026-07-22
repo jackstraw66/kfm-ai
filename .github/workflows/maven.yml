@@ -24,6 +24,7 @@ jobs:
       pull-requests: write  # Required to comment on or create pull requests
       issues: write         # Required to interact with repository issues
       checks: write         # Required to add check statuses to commits
+      security-events: write
 
     steps:
     - uses: actions/checkout@v4
